@@ -11,16 +11,16 @@ pipeline {
 
         stage('Build') {
             steps {
-                // Install dependencies and run unit tests
-                sh 'pip install -r requirements.txt'
-                sh 'pytest'
+                // Install dependencies and run unit tests (for Windows)
+                bat 'pip install -r requirements.txt'
+                bat 'pytest'
             }
         }
 
         stage('Docker Build') {
             steps {
-                // Build Docker image
-                sh 'docker build -t abhishekyd/flight-price-pred .'
+                // Build Docker image (Docker CLI on Windows)
+                bat 'docker build -t abhishekyd/flight-price-pred .'
             }
         }
 
@@ -28,16 +28,16 @@ pipeline {
             steps {
                 // Push Docker image to DockerHub
                 withCredentials([string(credentialsId: 'dockerhub-credentials', variable: 'DOCKERHUB_PASSWORD')]) {
-                    sh 'docker login -u yourusername -p $DOCKERHUB_PASSWORD'
-                    sh 'docker push abhishekyd/flight-price-pred'
+                    bat 'docker login -u yourusername -p %DOCKERHUB_PASSWORD%'
+                    bat 'docker push abhishekyd/flight-price-pred'
                 }
             }
         }
 
         stage('Deploy') {
             steps {
-                // Deploy to Kubernetes or any server
-                sh 'kubectl apply -f deployment.yml'
+                // Deploy to Kubernetes or any server (assuming kubectl is configured)
+                bat 'kubectl apply -f deployment.yml'
             }
         }
     }
@@ -45,6 +45,7 @@ pipeline {
     post {
         always {
             // Send notifications or cleanup actions
+            // Example: Clean up Docker images
         }
     }
 }
